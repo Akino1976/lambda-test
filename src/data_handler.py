@@ -16,8 +16,7 @@ pandas.set_option('max_colwidth', 10)
 
 logger = logging.getLogger(__name__)
 
-def main():
-    logger.info(f'Starting insert to postgre....')
+def _pandas_insert():
 
     data_set = pandas.read_excel(
         os.path.join(
@@ -44,15 +43,19 @@ def main():
         tablename='settlment'
     )
 
+
+def main():
+    logger.info(f'Starting insert to postgre....')
+
     DATA_MAPPING = {
         'conversation': 'conversation-export.csv',
         'queue_process': 'queue-export.csv',
         'user_info': 'user_export.csv',
     }
-    for key, value in DATA_MAPPING.items():
+    for table_name, file_name in DATA_MAPPING.items():
         file_path = os.path.join(
             settings.DATA_DIRECTORY,
-            'user-export.csv'
+            file_name
         )
         file_stream = open(file_path, 'rb')
         body = file_stream.read()
@@ -61,7 +64,7 @@ def main():
 
         database.insert_bulk_data(
             dataset=formatted_rows,
-            tablename='user_info'
+            tablename=table_name
         )
 
 
