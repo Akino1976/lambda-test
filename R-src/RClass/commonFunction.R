@@ -5,7 +5,6 @@
 library( methods )
 library( dplyr )
 
-
 RowStat		<- function( data, id, 
 					type = c('mean', 'var', 'sum','sd', 'min','max')) 
 {				
