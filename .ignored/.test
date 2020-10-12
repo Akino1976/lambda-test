@@ -1,0 +1,3 @@
+PG_USER=postgres
+PG_PASSWORD=Test-password 
+PG_HOST=127.0.0.1

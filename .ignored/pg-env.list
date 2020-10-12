@@ -1,0 +1,5 @@
+POSTGRES_DB=doktor_test
+PGDATA=/data/postgres
+POSTGRES_DB=doktor_test
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=Test-password

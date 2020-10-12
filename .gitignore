@@ -39,3 +39,5 @@ S.*
 crls.d
 openpgp-*
 private-keys*
+.env
+*.Rapp*

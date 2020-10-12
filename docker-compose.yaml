@@ -1,29 +1,28 @@
-﻿version: '3.8'
+﻿version: "3.8"
 
 services:
-
   storage:
     container_name: postgres_container
     build:
       context: ./postgres
       dockerfile: Dockerfile
     env_file:
-      - .env/pg-env.list
+      - .ignored/pg-env.list
     volumes:
-       - postgres:/data/postgres
+      - postgres:/data/postgres
     ports:
-      - '5432:5432'
+      - "5432:5432"
     networks:
       - postgres
-    restart: unless-stopped
+    restart: always
 
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
     env_file:
-      - .env/pgadmin-env.list
+      - .ignored/pgadmin-env.list
     volumes:
-       - pgadmin:/root/.pgadmin
+      - pgadmin:/root/.pgadmin
     ports:
       - "${SERVER_PORT:-5050}:80"
     networks:
@@ -35,5 +34,5 @@ networks:
     driver: bridge
 
 volumes:
-    postgres:
-    pgadmin:
+  postgres:
+  pgadmin:

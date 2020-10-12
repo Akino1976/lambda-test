@@ -34,7 +34,7 @@ Object$instant_pkgs( )
 drv <- dbDriver("PostgreSQL")
 # creates a connection to the postgres database
 # note that "con" will be used later in each connection to the database
-con <- dbConnect(drv, dbname = "TEST_DB",
+con <- dbConnect(drv, dbname = "doktor_test",
                  host = "localhost", port = 5432,
                  user = "postgres", password = 'Test-password')
 

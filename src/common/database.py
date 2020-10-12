@@ -39,7 +39,7 @@ PARAMETER_DICT = {
     'port': 5432,
     'user': settings.PG_USER,
     'password': settings.PG_PASSWORD,
-    'database': 'TEST_DB'
+    'database': 'doktor_test'
 }
 
 
