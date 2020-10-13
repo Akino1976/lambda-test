@@ -5,3 +5,4 @@ pandas==1.1.2
 psycopg2==2.8.6
 xlrd==1.2.0
 chardet==3.0.4
+peewee==3.13.3
