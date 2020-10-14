@@ -1,0 +1,42 @@
+$schema: http://json-schema.org/draft-07/schema#
+
+title: Schema for general Comments data messages
+
+type: array
+items:
+  $ref: "#/definitions/Comments"
+
+definitions:
+  Comments:
+    type: object
+
+    required:
+      - id
+      - amount
+      - insertad_at
+      - updated_at
+
+    custom_properties:
+      hash_id:
+        description: md5 hash
+        x-transform-key: employee_id
+        x-create-custom-value-by: create_hash_id
+        by:
+          - id
+          - insertad_at
+
+    properties:
+      id:
+        type: string
+        description: some unique id
+
+      amount:
+        type: integer
+        description: some amount
+
+      insertad_at:
+        type: string
+
+      updated_at:
+        type: string
+        description: when event was updated at

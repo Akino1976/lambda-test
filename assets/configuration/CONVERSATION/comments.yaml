@@ -1,0 +1,22 @@
+prefix: CONVERSATION/comments/
+fetch:
+  format: NEWLINE_DELIMITED_JSON
+  arguments:
+    database: "{{prod_endpoint}}"
+    schema: public
+    table_name: comments
+    fetch_by:
+      - insertad_at
+      - updated_at
+    destination_object: CONVERSATION/comments/
+insert:
+  format: NEWLINE_DELIMITED_JSON
+  arguments:
+    database: "{{stats_endpoint}}"
+    schema: base
+    table_name: comments
+schema_path: assets/resource-schemas/CONVERSATION/comments.yaml
+record_format:
+  model_path:
+    - definitions
+    - Comments
