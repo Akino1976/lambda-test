@@ -46,6 +46,61 @@ setDT(queueDT)
 conversationDT	 <- dbGetQuery(con, 'SELECT * FROM public.view_conversation')
 setDT(conversationDT)
 
+data_files 		<- list.files(path = file.path(dirname(FULLPATH), 'DATA'), full.names = TRUE)
+library(circular)
+conversationDT	<- fread(grep('conversation-export', data_files, value = TRUE))
+conversationDT[, ':=' (
+	conversation_opened_dt = as.POSIXct(conversation_opened, "%Y-%m-%d %H:%M:%S", tz = "Europe/Stockholm"),
+	conversation_closed_dt = as.POSIXct(conversation_closed, "%Y-%m-%d %H:%M:%S", tz = "Europe/Stockholm")
+)]
+conversationDT[, ':=' (
+	con_open_hms = strftime(conversation_opened_dt, format = '%H:%M:%S'),
+	con_closed_hms = strftime(conversation_closed_dt, format = '%H:%M:%S')
+)]
+conversationDT[,  ':=' (
+	con_open_hms_numeric = as.numeric(hms(con_open_hms))/3600,
+	con_close_hms_numeric = as.numeric(hms(con_closed_hms))/3600
+)]
+conversationDT 	<- conversationDT[!is.na(con_close_hms_numeric)]
+
+conversationDT[, ':=' (
+	conversation_opened_cs =  circular(con_open_hms_numeric, units = "hours", template = "clock24"),
+	conversation_closed_cs =  circular(con_close_hms_numeric, units = "hours", template = "clock24")
+)]
+
+estimates		 <- mle.vonmises(conversationDT[, conversation_opened_cs])
+p_mean 		 <- estimates$mu %% 24
+concentration	 <- estimates$kappa
+conversationDT[, densities := dvonmises(conversation_opened_cs, mu = p_mean, kappa = concentration)]
+top_5			 <- conversationDT[, .N, by = .(category)][order(N, decreasing = TRUE)][1:5, category]
+
+
+	ggplot(conversationDT[category %in% top_5], aes(x = conversation_closed_cs))+
+	facet_wrap(.~ category) +
+ 	geom_histogram(breaks = seq(0, 24), colour = "blue", fill = "lightblue")  + 
+ 	coord_polar() +
+ 	scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24)) +
+ 	labs(title = sprintf('Top 5 category conversation opened, total: [%s], Date: [%s]', date_frame[, .N], time_frame))
+
+profileDT		<- fread(grep('profile-expor', data_files, value = TRUE))
+conversationDT 	<- merge(conversationDT,
+		profileDT[, .(
+			child_male = SUM(gender == 'm'),
+			child_female = SUM(gender == 'f'),
+			total_child = .N		
+	), by = .(patient_id = user)], by = 'patient_id', all.x = TRUE
+)
+rm(profileDT)
+userDT			<- fread(grep('user-expor', data_files, value = TRUE))
+conversationDT 	<- merge(conversationDT,
+		userDT[, .(patient_id=id, gender,  age_bin, city)], by = 'patient_id', all.x = TRUE
+)
+
+queueDT			<- fread(grep('queue-expor', data_files, value = TRUE))
+
+for(i in names(conversationDT)) set(conversationDT, i=which(is.na(conversationDT[[i]])), j=i, value=NA)
+for(i in names(conversationDT)) set(conversationDT, i)
+conversationDT	
 
 conversationDT[grepl('midwife|nurse', staff_1_role), cost_estimate := 'lower']
 conversationDT[is.na(cost_estimate),  cost_estimate := 'high']

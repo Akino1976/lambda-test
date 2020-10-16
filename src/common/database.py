@@ -65,12 +65,11 @@ def get_chunk(items: List[Dict[str, Any]], chunk_size: int = 50) -> Iterable:
 
 def insert_bulk_data(dataset: List[Dict[str, Any]], tablename: str = None):
     try:
-        metadata = MetaData()
+        metadata = MetaData(schema="base")
 
         engine = get_engine()
-        tablename = "conversation"
-        table = get_table(engine=engine, tablename=tablename, schema="base")
-        metadata.reflect(engine, only=[tablename])
+
+        metadata.reflect(engine)
 
         Base = automap_base(metadata=metadata)
         Base.prepare()

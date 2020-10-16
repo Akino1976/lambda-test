@@ -45,7 +45,8 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE base.conversation (
-    id character varying(50) NOT NULL,
+    idx integer NOT NULL,
+    id character varying(50),
     patient_id character varying(50) NOT NULL,
     conversation_opened character varying(30),
     conversation_closed character varying(30),
@@ -86,9 +87,7 @@ CREATE TABLE base.user_info (
     removed character(2),
     listed character(2),
     listed_since character varying(30),
-    city character varying(30),
-    fax character varying,
-    email character varying
+    city character varying(30)
 );
 
 
@@ -132,6 +131,26 @@ CREATE VIEW analytics.view_conversation AS
 
 
 --
+-- Name: conversation_idx_seq; Type: SEQUENCE; Schema: base; Owner: -
+--
+
+CREATE SEQUENCE base.conversation_idx_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: conversation_idx_seq; Type: SEQUENCE OWNED BY; Schema: base; Owner: -
+--
+
+ALTER SEQUENCE base.conversation_idx_seq OWNED BY base.conversation.idx;
+
+
+--
 -- Name: queue_process; Type: TABLE; Schema: base; Owner: -
 --
 
@@ -157,11 +176,18 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: conversation idx; Type: DEFAULT; Schema: base; Owner: -
+--
+
+ALTER TABLE ONLY base.conversation ALTER COLUMN idx SET DEFAULT nextval('base.conversation_idx_seq'::regclass);
+
+
+--
 -- Name: conversation conversation_pkey; Type: CONSTRAINT; Schema: base; Owner: -
 --
 
 ALTER TABLE ONLY base.conversation
-    ADD CONSTRAINT conversation_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT conversation_pkey PRIMARY KEY (idx);
 
 
 --
@@ -202,5 +228,4 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20201012131739'),
     ('20201012133714'),
     ('20201012140807'),
-    ('20201012191415'),
-    ('20201012192448');
+    ('20201012191415');

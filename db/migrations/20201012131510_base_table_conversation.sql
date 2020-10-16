@@ -1,6 +1,7 @@
 -- migrate:up
     CREATE TABLE IF NOT EXISTS base.conversation (
-        id                              VARCHAR(50) PRIMARY KEY,
+        idx                             SERIAL PRIMARY KEY,
+        id                              VARCHAR(50),
         patient_id                      VARCHAR(50) NOT NULL,
         conversation_opened             VARCHAR(30) NULL,
         conversation_closed             VARCHAR(30) NULL,

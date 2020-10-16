@@ -6,6 +6,7 @@ develop-eggs/
 dist/
 downloads/
 eggs/
+.ignored
 .eggs/
 lib/
 lib64/
