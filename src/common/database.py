@@ -20,7 +20,6 @@ from sqlalchemy import (
     bindparam,
 )
 from sqlalchemy.engine import Engine
-import pandas
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +92,8 @@ def insert_bulk_data(dataset: List[Dict[str, Any]], tablename: str = None):
             f"Inserted {len(dataset)} records into the"
             f" table {tablename} in {round(total_time, 2)} seconds"
         )
+
+        return len(dataset)
 
     except Exception as error:
         logger.exception(f"Error in insert_data() for {tablename} {error}")
